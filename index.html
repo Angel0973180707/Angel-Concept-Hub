@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Angel Concept Hub｜概念館母版</title>
+  <title>Angel Concept Hub</title>
   <meta name="theme-color" content="#8FB9A8" />
-  <meta name="description" content="協助你整理、安放、保存產品素材的個人概念館（含 6 個引導、筆記庫、匯出/匯入、離線可用）" />
+  <meta name="description" content="名片準備版｜先整理好你要怎麼介紹自己，準備好後組成個人名片 PWA。" />
+
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
@@ -13,189 +14,116 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="topbar__inner">
-      <div class="brand">
-        <div class="brand__mark" aria-hidden="true">
-          <img src="./icon-192.png" alt="" />
-        </div>
-        <div class="brand__txt">
-          <div class="brand__name">Angel Concept Hub</div>
-          <div class="brand__tag">把零散的專業與生活素材，安放成一個會長大的「概念館」</div>
-        </div>
+    <div class="brand">
+      <img class="mark" src="./icon-192.png" alt="" />
+      <div class="brandTxt">
+        <div class="brandName">Angel Concept Hub</div>
+        <div class="brandSub" id="brandSub">名片準備版</div>
       </div>
-      <button class="pill" id="btnQuick" title="快速開始">快速開始</button>
     </div>
   </header>
 
   <main class="wrap">
     <!-- HOME -->
     <section class="page" data-page="home">
-      <div class="hero card">
-        <h1>你的素材，不需要更努力，只需要更有地方放。</h1>
-        <p class="muted">
-          這不是課程，沒有作業。你可以今天只寫一句，改天再回來。
-          你在這裡整理的內容，只存在你的裝置裡。
-        </p>
+      <div class="card hero">
+        <h1 id="homeTitle">先整理好<br/>你要怎麼介紹自己</h1>
+        <p class="sub" id="homeSub">等你準備好<br/>我們會幫你組成名片</p>
 
-        <div class="grid2">
-          <div class="mini card soft">
-            <h3>工具目標</h3>
-            <p class="muted">
-              協助你整理「可能成為產品的素材」，並用最不費力的方式保存好。
-            </p>
-          </div>
-          <div class="mini card soft">
-            <h3>你會得到</h3>
-            <ul class="muted">
-              <li>6 個引導，幫你把素材長出骨架</li>
-              <li>筆記庫：收藏、修改、複製、刪除</li>
-              <li>匯出 TXT/JSON、匯入 JSON（換裝置也能帶走）</li>
-              <li>離線可用（裝好就像一個小 App）</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="ctaRow">
-          <button class="btn" data-nav="guides">從引導開始</button>
-          <button class="btn ghost" data-nav="notes">先丟一句素材</button>
+        <div class="actions">
+          <button class="btn" data-go="headline" id="btnHeadline">關於我一句話</button>
+          <button class="btn" data-go="doing" id="btnDoing">我在做的事</button>
+          <button class="btn" data-go="voice" id="btnVoice">我的說話方式</button>
         </div>
       </div>
+    </section>
 
+    <!-- EDIT: HEADLINE -->
+    <section class="page" data-page="headline" hidden>
       <div class="card">
-        <div class="row between">
-          <h2>今日一句（最小行動）</h2>
-          <span class="badge" id="badgeSaved">未存</span>
-        </div>
-        <p class="muted">先寫一句就好：你最近最想解決誰的哪個痛？或你最常被問什麼？</p>
-        <textarea id="quickInput" placeholder="例如：我想幫助忙碌家長，把情緒急救變得更簡單。"></textarea>
+        <div class="kicker" id="kHeadline">關於你</div>
+        <textarea id="tHeadline" placeholder="我幫助＿＿＿
+用＿＿＿
+解決＿＿＿"></textarea>
         <div class="row">
-          <button class="btn" id="btnQuickSave">存到筆記庫</button>
-          <button class="btn ghost" id="btnQuickClear">清空</button>
-        </div>
-      </div>
-
-      <div class="card soft">
-        <h2>概念館的 3 個房間（你會一直用到）</h2>
-        <div class="grid3">
-          <div class="tile">
-            <div class="tile__t">素材池</div>
-            <div class="tile__d">故事、問題、句子、靈感碎片</div>
-          </div>
-          <div class="tile">
-            <div class="tile__t">骨架牆</div>
-            <div class="tile__d">你是誰、幫誰、怎麼幫</div>
-          </div>
-          <div class="tile">
-            <div class="tile__t">名片頁</div>
-            <div class="tile__d">一句介紹、三個亮點、聯絡方式（未來再接）</div>
-          </div>
+          <button class="btn primary" id="saveHeadline">存起來</button>
+          <button class="btn ghost" data-go="vault">去素材櫃</button>
         </div>
       </div>
     </section>
 
-    <!-- GUIDES -->
-    <section class="page" data-page="guides" hidden>
+    <!-- EDIT: DOING -->
+    <section class="page" data-page="doing" hidden>
       <div class="card">
-        <div class="row between">
-          <h2>六個引導（慢慢做就好）</h2>
-          <button class="btn ghost" id="btnResetGuides">重設引導內容</button>
-        </div>
-        <p class="muted">每個引導只有 3 塊：①這一塊在幫你做什麼 ②跟著填 ③今天先留一句</p>
-      </div>
-
-      <div class="guideList" id="guideList"></div>
-    </section>
-
-    <!-- NOTES -->
-    <section class="page" data-page="notes" hidden>
-      <div class="card">
-        <div class="row between">
-          <h2>筆記庫（你的素材都在這）</h2>
-          <div class="row">
-            <button class="btn ghost" id="btnExportTxt">匯出 TXT</button>
-            <button class="btn ghost" id="btnExportJson">匯出 JSON</button>
-            <label class="btn ghost file">
-              匯入 JSON
-              <input type="file" id="fileImport" accept="application/json" />
-            </label>
-          </div>
-        </div>
-        <p class="muted">你可以修改、複製、刪除。換裝置前，先匯出帶走。</p>
+        <div class="kicker" id="kDoing">你目前在做的事</div>
+        <textarea id="tDoing" placeholder="1
+2
+3"></textarea>
         <div class="row">
-          <input class="search" id="q" placeholder="搜尋筆記（關鍵字）" />
-          <button class="btn ghost" id="btnClearAll">清空全部（慎用）</button>
+          <button class="btn primary" id="saveDoing">存起來</button>
+          <button class="btn ghost" data-go="vault">去素材櫃</button>
         </div>
       </div>
-
-      <div id="notesBox" class="notes"></div>
     </section>
 
-    <!-- FAQ -->
-    <section class="page" data-page="faq" hidden>
+    <!-- EDIT: VOICE -->
+    <section class="page" data-page="voice" hidden>
       <div class="card">
-        <h2>使用說明與常見問題</h2>
-        <p class="muted">先安心：這個工具不需要每天使用；不需要一次做完；想到再回來就好。</p>
+        <div class="kicker" id="kVoice">你怎麼說話</div>
+        <textarea id="tVoice" placeholder="我通常會這樣說……"></textarea>
+        <div class="row">
+          <button class="btn primary" id="saveVoice">存起來</button>
+          <button class="btn ghost" data-go="vault">去素材櫃</button>
+        </div>
+      </div>
+    </section>
 
-        <details open>
-          <summary>這個工具到底在幫我做什麼？</summary>
-          <p>它幫你整理「可能成為產品的素材」，並把素材妥善安放。不是教你立刻發佈、也不是教你技術。</p>
-        </details>
-        <details>
-          <summary>我寫的內容存在哪裡？</summary>
-          <p>存在你自己的裝置裡（本機儲存）。不需要登入，也不會上傳到任何平台。</p>
-        </details>
-        <details>
-          <summary>我換手機或電腦怎麼辦？</summary>
-          <p>換裝置前，到「筆記庫」匯出 JSON 帶走；新裝置再匯入即可。</p>
-        </details>
-        <details>
-          <summary>我一定要照順序做完嗎？</summary>
-          <p>不用。今天只寫一句也可以。你做的每一步，都算數。</p>
-        </details>
-        <details>
-          <summary>這個工具會幫我發佈或販售嗎？</summary>
-          <p>不會。Concept Hub 只負責「整理與安放素材」。發佈與上架會是下一個孩子（之後再接）。</p>
-        </details>
+    <!-- VAULT -->
+    <section class="page" data-page="vault" hidden>
+      <div class="card">
+        <div class="headRow">
+          <div class="title" id="vaultTitle">我的名片內容</div>
+          <button class="btn ghost" id="exportJson">匯出</button>
+          <label class="btn ghost file">
+            匯入
+            <input type="file" id="importFile" accept="application/json" />
+          </label>
+        </div>
+
+        <div class="tabs">
+          <button class="chip isOn" data-filter="headline" id="tabHeadline">一句話</button>
+          <button class="chip" data-filter="doing" id="tabDoing">做的事</button>
+          <button class="chip" data-filter="voice" id="tabVoice">說話方式</button>
+        </div>
+
+        <div id="vaultList" class="list"></div>
       </div>
     </section>
 
     <!-- ABOUT -->
     <section class="page" data-page="about" hidden>
       <div class="card">
-        <h2>關於這個母版</h2>
-        <p class="muted">
-          Angel Concept Hub 是「概念館母版」：你可以用它整理自己的專業與生活素材，慢慢長出一個可對外介紹的結構。
-        </p>
-        <div class="grid2">
-          <div class="mini card soft">
-            <h3>資料主權</h3>
-            <p class="muted">內容只存在你的裝置裡。你隨時能匯出帶走。</p>
-          </div>
-          <div class="mini card soft">
-            <h3>界線</h3>
-            <p class="muted">本工具不提供雲端保存或帳號服務；你不需要被綁住。</p>
-          </div>
+        <div class="kicker">模式</div>
+        <div class="tabs">
+          <button class="chip isOn" id="modePersonal">個人版</button>
+          <button class="chip" id="modePro">專業版</button>
         </div>
+
+        <div class="spacer"></div>
+        <div class="kicker" id="nextTitle">下一步</div>
+        <div class="plain" id="nextText">當你準備好了<br/>下一步<br/>我們會把這些內容<br/>組成你的個人名片</div>
+
+        <div class="spacer"></div>
+        <div class="kicker">資料</div>
+        <div class="plain">內容只存在你的裝置</div>
       </div>
     </section>
   </main>
 
-  <nav class="tabbar" aria-label="主選單">
-    <button class="tab is-on" data-nav="home">
-      <span class="i">⌂</span><span>首頁</span>
-    </button>
-    <button class="tab" data-nav="guides">
-      <span class="i">✦</span><span>引導</span>
-    </button>
-    <button class="tab" data-nav="notes">
-      <span class="i">✎</span><span>筆記</span>
-    </button>
-    <button class="tab" data-nav="faq">
-      <span class="i">?</span><span>FAQ</span>
-    </button>
-    <button class="tab" data-nav="about">
-      <span class="i">☼</span><span>關於</span>
-    </button>
+  <nav class="tabbar">
+    <button class="tab isOn" data-go="home"><span>首頁</span></button>
+    <button class="tab" data-go="vault"><span>素材櫃</span></button>
+    <button class="tab" data-go="about"><span>關於</span></button>
   </nav>
 
   <div class="toast" id="toast" aria-live="polite" aria-atomic="true"></div>
