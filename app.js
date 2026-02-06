@@ -1,270 +1,203 @@
-const KEY = 'angel_concept_hub_v13_min';
-const MODE_KEY = 'angel_concept_hub_mode_v13'; // personal | pro
+/* Angel Concept Hub v1
+   - Warm & minimal
+   - localStorage only
+   - Private mode default
+   - Share mode = copy / download only (no auto publishing)
+*/
 
-const labels = {
-  personal: {
-    brandSub: '名片準備版｜個人',
-    homeBtns: ['關於我一句話','我在做的事','我的說話方式'],
-    kickers: ['關於你','你目前在做的事','你怎麼說話'],
-    placeholders: [
-      '我喜歡＿＿＿\n我在乎＿＿＿\n我想做＿＿＿',
-      '1\n2\n3',
-      '我通常會這樣說……'
-    ],
-    tabs: ['一句話','做的事','說話方式'],
-    nextText: '當你準備好了\n下一步\n我們會把這些內容\n組成你的個人名片'
-  },
-  pro: {
-    brandSub: '名片準備版｜專業',
-    homeBtns: ['我幫助誰','我提供什麼','我的對外語氣'],
-    kickers: ['定位','你提供的內容','你對外怎麼說'],
-    placeholders: [
-      '我幫助＿＿＿\n用＿＿＿\n解決＿＿＿',
-      '1\n2\n3',
-      '我通常會這樣說……'
-    ],
-    tabs: ['一句話','做的事','說話方式'],
-    nextText: '當你準備好了\n下一步\n我們會把這些內容\n組成你的專業名片'
+const STORAGE_KEY = "angel_concept_hub_v1";
+const MODE_KEY = "angel_concept_hub_mode_v1"; // "private" | "share"
+
+const pages = Array.from(document.querySelectorAll(".page"));
+const modeBtn = document.getElementById("modeBtn");
+const modeLabel = document.getElementById("modeLabel");
+const modeModal = document.getElementById("modeModal");
+const pickPrivate = document.getElementById("pickPrivate");
+const pickShare = document.getElementById("pickShare");
+const confirmModeBtn = document.getElementById("confirmModeBtn");
+
+const reviewBtn = document.getElementById("reviewBtn");
+const reviewPanel = document.getElementById("reviewPanel");
+const reviewBox = document.getElementById("reviewBox");
+const closeReview = document.getElementById("closeReview");
+const copyAllBtn = document.getElementById("copyAllBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+
+const t1 = document.getElementById("t1");
+const t2 = document.getElementById("t2");
+const t3 = document.getElementById("t3");
+const t4 = document.getElementById("t4");
+
+// ---- State ----
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : { t1: "", t2: "", t3: "", t4: "", updatedAt: "" };
+  } catch {
+    return { t1: "", t2: "", t3: "", t4: "", updatedAt: "" };
   }
-};
-
-function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('on');
-  clearTimeout(toast._tm);
-  toast._tm = setTimeout(()=>t.classList.remove('on'), 1100);
 }
 
-function loadState(){
-  try{ return JSON.parse(localStorage.getItem(KEY) || '{"items":[]}'); }
-  catch{ return {items:[]}; }
+function saveState(partial) {
+  const state = { ...loadState(), ...partial, updatedAt: new Date().toISOString() };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
-function saveState(s){ localStorage.setItem(KEY, JSON.stringify(s)); }
-function loadMode(){
+
+function getMode() {
   const m = localStorage.getItem(MODE_KEY);
-  return (m === 'pro' || m === 'personal') ? m : 'personal';
-}
-function saveMode(m){ localStorage.setItem(MODE_KEY, m); }
-function nowISO(){ return new Date().toISOString(); }
-function esc(s=''){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-function show(page){
-  document.querySelectorAll('.page').forEach(p => p.hidden = (p.dataset.page !== page));
-  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('isOn', b.dataset.go === page));
-  window.scrollTo({top:0, behavior:'instant'});
-}
-document.body.addEventListener('click', (e)=>{
-  const go = e.target.closest('[data-go]')?.dataset?.go;
-  if(go) show(go);
-});
-
-function upsertOne(type, text){
-  const t = (text||'').trim();
-  if(!t) return false;
-  const s = loadState();
-  const existing = s.items.find(x => x.type === type);
-  if(existing){
-    existing.text = t;
-    existing.updatedAt = nowISO();
-  }else{
-    s.items.push({ id: (crypto.randomUUID?.() || String(Date.now())), type, text: t, createdAt: nowISO(), updatedAt: nowISO() });
-  }
-  saveState(s);
-  return true;
-}
-function getOne(type){
-  const s = loadState();
-  return s.items.find(x => x.type === type)?.text || '';
+  return (m === "share" || m === "private") ? m : "private";
 }
 
-function applyMode(mode){
-  const L = labels[mode];
-  document.getElementById('brandSub').textContent = L.brandSub;
-
-  document.getElementById('btnHeadline').textContent = L.homeBtns[0];
-  document.getElementById('btnDoing').textContent = L.homeBtns[1];
-  document.getElementById('btnVoice').textContent = L.homeBtns[2];
-
-  document.getElementById('kHeadline').textContent = L.kickers[0];
-  document.getElementById('kDoing').textContent = L.kickers[1];
-  document.getElementById('kVoice').textContent = L.kickers[2];
-
-  document.getElementById('tHeadline').placeholder = L.placeholders[0];
-  document.getElementById('tDoing').placeholder = L.placeholders[1];
-  document.getElementById('tVoice').placeholder = L.placeholders[2];
-
-  document.getElementById('tabHeadline').textContent = L.tabs[0];
-  document.getElementById('tabDoing').textContent = L.tabs[1];
-  document.getElementById('tabVoice').textContent = L.tabs[2];
-
-  document.getElementById('nextText').innerHTML = esc(L.nextText).replace(/\n/g,'<br/>');
-
-  document.getElementById('modePersonal').classList.toggle('isOn', mode==='personal');
-  document.getElementById('modePro').classList.toggle('isOn', mode==='pro');
+function setMode(m) {
+  localStorage.setItem(MODE_KEY, m);
+  renderMode();
 }
 
-function loadInputs(){
-  document.getElementById('tHeadline').value = getOne('headline');
-  document.getElementById('tDoing').value = getOne('doing');
-  document.getElementById('tVoice').value = getOne('voice');
+function renderMode() {
+  const m = getMode();
+  modeLabel.textContent = (m === "private") ? "留給自己" : "願意分享";
+  // dot color hint via inline style
+  const dot = modeBtn.querySelector(".dot");
+  dot.style.background = (m === "private") ? "#2e6b3b" : "#0c2a16";
+  dot.style.boxShadow = (m === "private")
+    ? "0 0 0 4px rgba(46,107,59,.12)"
+    : "0 0 0 4px rgba(12,42,22,.10)";
 }
 
-let filter = 'headline';
-function setFilter(f){
-  filter = f;
-  document.querySelectorAll('.chip[data-filter]').forEach(c => c.classList.toggle('isOn', c.dataset.filter === f));
-  renderVault();
-}
-document.querySelectorAll('.chip[data-filter]').forEach(c => c.addEventListener('click', ()=>setFilter(c.dataset.filter)));
-
-function tagName(type){
-  const mode = loadMode();
-  const L = labels[mode];
-  if(type==='headline') return L.tabs[0];
-  if(type==='doing') return L.tabs[1];
-  return L.tabs[2];
+// ---- Navigation ----
+function showPage(name) {
+  pages.forEach(p => p.classList.toggle("active", p.dataset.page === name));
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function renderVault(){
-  const s = loadState();
-  const items = s.items.filter(x => x.type === filter);
-  const box = document.getElementById('vaultList');
-
-  if(items.length === 0){
-    box.innerHTML = `<div class="item"><div class="itemTag">${esc(tagName(filter))}</div><div class="plain">（目前空白）</div></div>`;
+document.addEventListener("click", (e) => {
+  const go = e.target.closest("[data-go]");
+  if (go) {
+    const target = go.getAttribute("data-go");
+    showPage(target);
     return;
   }
 
-  box.innerHTML = items.map(it => `
-    <div class="item" data-id="${esc(it.id)}">
-      <div class="itemTop">
-        <div class="itemTag">${esc(tagName(it.type))}</div>
-        <div class="smallBtns">
-          <button class="smallBtn" data-act="copy">複製</button>
-          <button class="smallBtn" data-act="clear">清空</button>
-        </div>
-      </div>
-      <textarea class="vaultTa">${esc(it.text)}</textarea>
-    </div>
-  `).join('');
+  const saveBtn = e.target.closest("[data-save]");
+  if (saveBtn) {
+    const fieldId = saveBtn.getAttribute("data-save");
+    const next = saveBtn.getAttribute("data-next");
+    const val = (document.getElementById(fieldId)?.value || "").trim();
+
+    // Save even if empty: user may want to keep blank as a state
+    saveState({ [fieldId]: val });
+
+    // Light feedback: no toast, no judgement
+    showPage(next);
+    return;
+  }
+});
+
+// ---- Init load ----
+(function init() {
+  const state = loadState();
+  t1.value = state.t1 || "";
+  t2.value = state.t2 || "";
+  t3.value = state.t3 || "";
+  t4.value = state.t4 || "";
+  renderMode();
+})();
+
+// ---- Mode modal ----
+let pendingMode = getMode();
+
+modeBtn.addEventListener("click", () => {
+  pendingMode = getMode();
+  modeModal.showModal();
+});
+
+pickPrivate.addEventListener("click", () => {
+  pendingMode = "private";
+  pickPrivate.style.borderColor = "rgba(46,107,59,.45)";
+  pickShare.style.borderColor = "rgba(16,32,22,.12)";
+});
+
+pickShare.addEventListener("click", () => {
+  pendingMode = "share";
+  pickShare.style.borderColor = "rgba(12,42,22,.40)";
+  pickPrivate.style.borderColor = "rgba(16,32,22,.12)";
+});
+
+confirmModeBtn.addEventListener("click", () => {
+  setMode(pendingMode);
+  // dialog closes by form method=dialog
+});
+
+// ---- Review panel ----
+function buildReviewText() {
+  const s = loadState();
+  const blocks = [
+    ["我還在我自己裡面嗎", s.t1],
+    ["我其實對什麼有感覺", s.t2],
+    ["有哪些東西，我其實不想放掉", s.t3],
+    ["如果我願意出現一下", s.t4],
+  ];
+
+  const body = blocks.map(([title, text]) => {
+    const t = (text || "").trim();
+    return `【${title}】\n${t ? t : "（留白）"}`;
+  }).join("\n\n");
+
+  const footer = (getMode() === "private")
+    ? "\n\n—\n模式：留給自己（內容只存在你的裝置）"
+    : "\n\n—\n模式：願意分享（你可自行複製/下載，沒有自動對外）";
+
+  return body + footer;
 }
 
-document.getElementById('vaultList').addEventListener('input', (e)=>{
-  const card = e.target.closest('.item');
-  if(!card) return;
-  const id = card.dataset.id;
-  const val = e.target.value;
-  const s = loadState();
-  const it = s.items.find(x => x.id === id);
-  if(!it) return;
-  it.text = val;
-  it.updatedAt = nowISO();
-  saveState(s);
+reviewBtn.addEventListener("click", () => {
+  reviewPanel.hidden = false;
+  reviewBox.textContent = buildReviewText();
 });
 
-document.getElementById('vaultList').addEventListener('click', async (e)=>{
-  const btn = e.target.closest('button');
-  if(!btn) return;
-  const card = e.target.closest('.item');
-  const id = card?.dataset?.id;
-  if(!id) return;
-  const act = btn.dataset.act;
+closeReview.addEventListener("click", () => {
+  reviewPanel.hidden = true;
+});
 
-  const s = loadState();
-  const it = s.items.find(x => x.id === id);
-  if(!it) return;
-
-  if(act === 'clear'){
-    it.text = '';
-    it.updatedAt = nowISO();
-    saveState(s);
-    renderVault();
-    toast('已清空');
-  }
-  if(act === 'copy'){
-    const text = it.text || '';
-    try{
-      await navigator.clipboard.writeText(text);
-      toast('已複製');
-    }catch{
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      ta.remove();
-      toast('已複製');
-    }
+copyAllBtn.addEventListener("click", async () => {
+  const text = buildReviewText();
+  try {
+    await navigator.clipboard.writeText(text);
+    copyAllBtn.textContent = "已複製";
+    setTimeout(() => (copyAllBtn.textContent = "複製"), 900);
+  } catch {
+    // fallback
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+    copyAllBtn.textContent = "已複製";
+    setTimeout(() => (copyAllBtn.textContent = "複製"), 900);
   }
 });
 
-document.getElementById('saveHeadline').addEventListener('click', ()=>{
-  if(upsertOne('headline', document.getElementById('tHeadline').value)){
-    toast('已存');
-    renderVault();
-  }
-});
-document.getElementById('saveDoing').addEventListener('click', ()=>{
-  if(upsertOne('doing', document.getElementById('tDoing').value)){
-    toast('已存');
-    renderVault();
-  }
-});
-document.getElementById('saveVoice').addEventListener('click', ()=>{
-  if(upsertOne('voice', document.getElementById('tVoice').value)){
-    toast('已存');
-    renderVault();
-  }
-});
-
-document.getElementById('modePersonal').addEventListener('click', ()=>{
-  saveMode('personal'); applyMode('personal'); toast('個人版'); renderVault();
-});
-document.getElementById('modePro').addEventListener('click', ()=>{
-  saveMode('pro'); applyMode('pro'); toast('專業版'); renderVault();
-});
-
-document.getElementById('exportJson').addEventListener('click', ()=>{
-  const s = loadState();
-  const blob = new Blob([JSON.stringify(s, null, 2)], {type:'application/json;charset=utf-8'});
+downloadBtn.addEventListener("click", () => {
+  const text = buildReviewText();
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
+  const ts = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  const name = `angel-notes-${ts.getFullYear()}${pad(ts.getMonth()+1)}${pad(ts.getDate())}-${pad(ts.getHours())}${pad(ts.getMinutes())}.txt`;
   a.href = url;
-  a.download = 'angel-concept-hub.json';
+  a.download = name;
   document.body.appendChild(a);
   a.click();
-  setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 0);
-  toast('已匯出');
+  a.remove();
+  URL.revokeObjectURL(url);
 });
 
-document.getElementById('importFile').addEventListener('change', async (e)=>{
-  const file = e.target.files?.[0];
-  if(!file) return;
-  try{
-    const text = await file.text();
-    const incoming = JSON.parse(text);
-    if(!incoming || !Array.isArray(incoming.items)) throw new Error('bad');
-    saveState(incoming);
-    loadInputs();
-    renderVault();
-    toast('已匯入');
-  }catch{
-    toast('匯入失敗');
-  }finally{
-    e.target.value = '';
-  }
-});
-
-setFilter('headline');
-const mode = loadMode();
-applyMode(mode);
-loadInputs();
-renderVault();
-show('home');
-
-if('serviceWorker' in navigator){
-  window.addEventListener('load', ()=>{
-    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+// Keep state synced while typing, but gently (no heavy autosave)
+[t1, t2, t3, t4].forEach((el) => {
+  el.addEventListener("blur", () => {
+    const id = el.id;
+    saveState({ [id]: el.value.trim() });
   });
-}
+});
