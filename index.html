@@ -1,203 +1,44 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>出現一下｜Angel Concept Hub</title>
-  <meta name="theme-color" content="#0c2a16" />
-  <meta name="description" content="出現一下：留一個位置給自己。溫馨、簡潔、可離線的私密 PWA。">
-  <link rel="manifest" href="./manifest.json" />
-  <link rel="icon" href="./icons/icon-192.png" />
-  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
-  <link rel="stylesheet" href="./styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Angel Concept Hub</title>
+  <meta name="theme-color" content="#8FB9A8">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-title">出現一下</div>
-      <div class="brand-sub">留一個位置給自己</div>
-    </div>
+<header>
+  <h1>Angel Concept Hub</h1>
+  <p class="tagline">協助你整理、安放、保存產品素材的個人概念館</p>
+</header>
 
-    <button class="mode-pill" id="modeBtn" type="button" aria-label="模式切換">
-      <span class="dot" aria-hidden="true"></span>
-      <span id="modeLabel">留給自己</span>
-    </button>
-  </header>
+<main>
+<section>
+  <h2>開始整理</h2>
+  <p>你現在寫的內容，會自動保存在你的裝置裡，不需要另外存檔。</p>
+  <textarea id="input" placeholder="從一句話開始也可以…"></textarea>
+  <button onclick="saveNote()">存到我的筆記</button>
+</section>
 
-  <main class="shell">
-    <!-- Home -->
-    <section class="card page active" data-page="home">
-      <h1 class="h1">出現一下</h1>
-      <p class="p">
-        這裡不是要你想清楚什麼，<br/>
-        也不是要你成為誰。<br/><br/>
-        只是讓你，在忙碌的生活裡，<br/>
-        出現一下。
-      </p>
-      <div class="actions">
-        <button class="btn primary" data-go="step1">開始</button>
-      </div>
-    </section>
+<section>
+  <h2>我的筆記</h2>
+  <div id="notes"></div>
+</section>
 
-    <!-- Step 1 -->
-    <section class="card page" data-page="step1">
-      <h2 class="h2">我還在我自己裡面嗎</h2>
-      <p class="p">
-        先不用想角色、責任或未來。<br/><br/>
-        這一刻，<br/>
-        你最明顯的感受是什麼？
-      </p>
+<section>
+  <h2>使用說明與常見問題</h2>
+  <p>這個工具不需要每天使用，不需要一次做完，想到再回來就好。</p>
+  <details><summary>這個工具是在教我做產品嗎？</summary>
+  <p>不是。它協助你整理可能成為產品的素材。</p></details>
+  <details><summary>我寫的內容存在哪？</summary>
+  <p>存在你自己的裝置裡，不會上傳到任何平台。</p></details>
+  <details><summary>我可以把內容帶走嗎？</summary>
+  <p>可以，未來可匯出成文字或結構檔。</p></details>
+</section>
+</main>
 
-      <label class="field">
-        <textarea id="t1" rows="5" placeholder="例如：累、卡住、空空的、很滿、沒感覺"></textarea>
-      </label>
-
-      <p class="hint">不用整理，也不用寫得好。能感覺到，就夠了。</p>
-
-      <div class="actions split">
-        <button class="btn ghost" data-go="home">返回</button>
-        <button class="btn primary" data-save="t1" data-next="step2">留下來</button>
-      </div>
-    </section>
-
-    <!-- Step 2 -->
-    <section class="card page" data-page="step2">
-      <h2 class="h2">我其實對什麼有感覺</h2>
-      <p class="p">
-        日子久了，我們很容易只剩下功能。<br/><br/>
-        但有些小事，<br/>
-        會讓你心裡動一下。
-      </p>
-
-      <label class="field">
-        <textarea id="t2" rows="6" placeholder="最近，有沒有哪一件小事，讓你停了一下、皺眉、或微微一笑？"></textarea>
-      </label>
-
-      <p class="hint">不用想值不值得。有感覺，本身就很真實。</p>
-
-      <div class="actions split">
-        <button class="btn ghost" data-go="step1">上一頁</button>
-        <button class="btn primary" data-save="t2" data-next="step3">放在這裡</button>
-      </div>
-    </section>
-
-    <!-- Step 3 -->
-    <section class="card page" data-page="step3">
-      <h2 class="h2">有哪些東西，我其實不想放掉</h2>
-      <p class="p">
-        有些東西不是計畫，<br/>
-        也不是目標，<br/>
-        卻一直陪著你。
-      </p>
-
-      <label class="field">
-        <textarea id="t3" rows="6" placeholder="如果不用想現實安排，有沒有哪個想法、喜歡或在意，你其實不太想放掉？"></textarea>
-      </label>
-
-      <p class="hint">留下來，不代表現在要用。它只是被你承認了。</p>
-
-      <div class="actions split">
-        <button class="btn ghost" data-go="step2">上一頁</button>
-        <button class="btn primary" data-save="t3" data-next="step4">先留著</button>
-      </div>
-    </section>
-
-    <!-- Step 4 -->
-    <section class="card page" data-page="step4">
-      <h2 class="h2">如果我願意出現一下</h2>
-      <p class="p">
-        不是要被看見，<br/>
-        也不是要說明自己。<br/><br/>
-        只是想像一下——<br/>
-        如果你為自己留一個位置，<br/>
-        那會是什麼樣的你？
-      </p>
-
-      <label class="field">
-        <textarea id="t4" rows="6" placeholder="不是身分、不是頭銜，是一段你看了會點頭的描述。"></textarea>
-      </label>
-
-      <p class="hint">這裡沒有觀眾。只有你。</p>
-
-      <div class="actions split">
-        <button class="btn ghost" data-go="step3">上一頁</button>
-        <button class="btn primary" data-save="t4" data-next="done">完成這一段</button>
-      </div>
-    </section>
-
-    <!-- Done -->
-    <section class="card page" data-page="done">
-      <div class="center">
-        <p class="p big">
-          你沒有決定任何方向，<br/>
-          也沒有承諾任何事情。<br/><br/>
-          你只是替自己，<br/>
-          留了一個位置。
-        </p>
-        <p class="hint">有時候，這就很重要了。</p>
-      </div>
-
-      <div class="actions">
-        <button class="btn ghost" id="reviewBtn" type="button">先留在這裡</button>
-        <button class="btn primary" data-go="home">之後再回來</button>
-      </div>
-
-      <div class="divider"></div>
-
-      <section class="review" id="reviewPanel" hidden>
-        <div class="review-head">
-          <div class="review-title">這次留下的內容</div>
-          <button class="btn tiny ghost" id="closeReview" type="button">收起</button>
-        </div>
-
-        <div class="review-box" id="reviewBox"></div>
-
-        <div class="actions split">
-          <button class="btn ghost" id="copyAllBtn" type="button">複製</button>
-          <button class="btn ghost" id="downloadBtn" type="button">下載文字檔</button>
-        </div>
-
-        <p class="hint">
-          ※ 預設是「留給自己」，內容只存在你的裝置裡。<br/>
-          若你切換到「願意分享」，也只會提供複製/下載，不會自動對外。
-        </p>
-      </section>
-    </section>
-  </main>
-
-  <!-- Mode Modal -->
-  <dialog class="modal" id="modeModal">
-    <form method="dialog" class="modal-card">
-      <div class="modal-title">模式</div>
-      <p class="modal-p">
-        分享不是義務。<br/>
-        你可以一直只留給自己。
-      </p>
-
-      <div class="mode-list">
-        <button class="mode-item" id="pickPrivate" type="button">
-          <div class="mode-name">留給自己</div>
-          <div class="mode-desc">只屬於你的空間，不需要被理解</div>
-        </button>
-
-        <button class="mode-item" id="pickShare" type="button">
-          <div class="mode-name">願意分享</div>
-          <div class="mode-desc">不是表現，只是讓一部分被看見（複製/下載）</div>
-        </button>
-      </div>
-
-      <div class="actions split">
-        <button class="btn ghost" value="cancel">再等等</button>
-        <button class="btn primary" id="confirmModeBtn" value="default">我確定</button>
-      </div>
-    </form>
-  </dialog>
-
-  <script src="./app.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
-    }
-  </script>
+<script src="app.js"></script>
 </body>
 </html>
