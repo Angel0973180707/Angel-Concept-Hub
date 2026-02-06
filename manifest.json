@@ -1,23 +1,14 @@
 {
-  "name": "Angel Concept Hub",
-  "short_name": "ConceptHub",
-  "start_url": "./",
+  "name": "出現一下｜Angel Concept Hub",
+  "short_name": "出現一下",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f6faf8",
-  "theme_color": "#8FB9A8",
+  "background_color": "#f7f6f2",
+  "theme_color": "#0c2a16",
+  "description": "留一個位置給自己。溫馨、簡潔、可離線的私密 PWA。",
   "icons": [
-    {
-      "src": "./icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "./icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
